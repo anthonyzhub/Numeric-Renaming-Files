@@ -3,8 +3,7 @@ import os
 if __name__ == "__main__":
     
     # Specify directory
-    current_directory = "/Users/anthonyzamora/Downloads/videos/AOT/"
-    # current_directory = "/mnt/External-HDD/Anime/AOT"
+    current_directory = "/Users/anthonyzhub/Downloads/"
 
     # List all files in directory
     list_directory = []
