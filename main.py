@@ -67,6 +67,29 @@ def renameAllFiles(pathName):
 
     # OBJECTIVE: Rename all files inside directory
 
+    def helper(pathName, newName, counter):
+
+        # Create an oldCounter for future use
+        oldCounter = 0
+
+        # Create a proposed/temporary name
+        tmpName = pathName + newName.replace("#", "{}".format(counter))
+
+        while True:
+
+            # If file already exists, increment counter and copy its old value
+            if os.path.exists(tmpName):
+
+                oldCounter = counter
+                counter += 1
+
+            # If not, then return proposed name
+            else:
+                return (tmpName, counter)
+
+            # Create another proposed/temporary name
+            tmpName = pathName + newName.replace("#", "{}".format(counter))
+
     # Does path exist
     if doesDirectoryExist(pathName) == False:
         print("Invalid directory!")
@@ -84,7 +107,8 @@ def renameAllFiles(pathName):
     for f in filesList:
 
         # Create a temporary name
-        tmpName = pathName + newName.replace("#", "{}".format(counter))
+        # tmpName = pathName + newName.replace("#", "{}".format(counter))
+        tmpName, counter = helper(pathName, newName, counter)
 
         # Rename file in OS
         os.rename(f, tmpName)
@@ -107,7 +131,7 @@ def renameSomeFiles(filesList):
         tmpName = newName.replace("#", "{}".format(counter))
 
         # Rename file
-        os.rename(f, tmpName)
+        os.system("mv {} {}".format(f, tmpName))
         counter += 1
 
     # Print directory's contents
@@ -144,6 +168,10 @@ if __name__ == "__main__":
 
         # Slice list to get directory's path
         filePath = cmds[-1]
+
+        # If filePath is ".", then request current working directory
+        if filePath == ".":
+            filePath = getWorkingDirectory()
 
         # NOTE: If path doesn't end with /, then directory cannot be accessed
         if filePath[-1] != "/":
