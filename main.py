@@ -2,6 +2,8 @@
 import os
 import sys
 import re
+import time
+import stat
 
 def getNewName():
 
@@ -16,6 +18,7 @@ def getNewName():
         if ("#" in newName) and counter.isnumeric():
             return (newName, int(counter))
 
+"""
 def getAllFiles(directoryPath):
 
     # OBJECTIVE: Return a sorted list of all non-hidden files inside directory
@@ -34,8 +37,44 @@ def getAllFiles(directoryPath):
             filesList.append(pathName)
 
     # Return sorted list
-    filesList.sort()
+    # filesList.sort()
     return filesList
+"""
+
+def getAllFiles(path):
+
+    sortedDict = dict()
+
+    # Add full path to list
+    entryPaths = [os.path.join(path, file) for file in os.listdir(path)]
+
+    # Create a list of tuples that has statuses of each file
+    fileStatuses = list()
+    for filepath in entryPaths:
+        fileStatuses.append((os.stat(filepath), filepath))
+    # print(fileStatuses)
+
+    # Collect date and file name
+    files = list()
+    for status, filepath in fileStatuses:
+        if stat.S_ISREG(status[stat.ST_MODE]):
+            files.append((status[stat.ST_CTIME], filepath))
+    # print(files)
+
+    for creationTime, filePath in sorted(files):
+
+        creationDate = time.ctime(creationTime)
+        fileName = os.path.basename(filePath)
+        # sortedList.append(creationDate + " " + fileName)
+        sortedDict[fileName] = creationDate
+
+    # Sort dictionary based on values
+    newDict = dict()
+    for k, v in sorted(sortedDict.items(), key=lambda value: value[1]):
+        newDict[k] = v
+        print(k)
+
+    return newDict
 
 def doesFileExist(filesList):
 
@@ -99,7 +138,7 @@ def renameAllFiles(pathName):
 
     # Get all files inside directory
     filesList = getAllFiles(pathName)
-    # print(filesList)
+    print(filesList)
 
     # Get new name
     newName, counter = getNewName()
@@ -111,6 +150,7 @@ def renameAllFiles(pathName):
         tmpName, counter = helper(pathName, newName, counter)
 
         # Rename file in OS
+        print("Renaming {} to {}".format(f, tmpName))
         os.rename(f, tmpName)
         counter += 1
 
